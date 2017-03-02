@@ -6,6 +6,20 @@
 
 using namespace std;
 
+int HomXOR (LWE::CipherText *res,FHEW::EvalKey Ek,LWE::CipherText ct1,LWE::CipherText ct2)
+{
+  LWE::CipherText i1,i2,i3;
+  
+  FHEW::HomNAND(&i1,Ek,ct1,ct2);
+  FHEW::HomNAND(&i2,Ek,ct1,i1);
+  FHEW::HomNAND(&i3,Ek,ct2,i1);
+  FHEW::HomNAND(res,Ek,i3,i2);
+  return 0;
+ 
+}  
+
+int FullAdd(LWE::CipherText *res,FHEW::EvalKey Ek,LWE::CipherText ct1,LWE::CipherText ct2)
+
 
 int main()
 {
@@ -17,8 +31,8 @@ int main()
 
 
   //Encrypt a message
-  int message1=0;
-  int message2=1;
+  int message1=1;
+  int message2=0;
   LWE::CipherText ct1;
   LWE::CipherText ct2, res;
   LWE::Encrypt(&ct1, sk, message1);
@@ -27,7 +41,7 @@ int main()
   //generate Evaluation key
   FHEW::EvalKey EK;
   FHEW::KeyGen(&EK, sk);
-  FHEW::HomNAND(&res, EK, ct1, ct2);
+  HomXOR(&res, EK, ct1, ct2);
   int  r = LWE::Decrypt(sk,res);
   printf("%d\n",r);
 
